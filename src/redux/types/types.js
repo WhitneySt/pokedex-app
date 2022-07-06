@@ -14,5 +14,9 @@ export const typesRegister = {
 }
 
 export const typesPokemon = {
-    fill: '[Pokemon] fill'
+    fill: '[Pokemon] fill',
+    fillFavorites: '[Pokemon] fillFavorites',
+    addPokemon: '[Pokemon] addPokemon',
+    deletePokemon: '[Pokemon] deletePokemon',
+    error: '[Pokemon] error',
 }

@@ -24,7 +24,6 @@ const Login = () => {
         console.log('Failed:', errorInfo);
     };
 
-    console.log({ loginError });
     if (loginError) {
         Swal.fire({
             icon: 'error',
@@ -41,6 +40,7 @@ const Login = () => {
                 text: "Welcome to Pokedex App"
             }).then(() => {
                 dispatch(actionAuthenticatedSync());
+                navigate('/home');
             });
         }
     }

@@ -12,7 +12,7 @@ export const actionLoginAsync = (email, password) => {
             .then(({ user }) => {
                 const { displayName, accessToken, photoURL, phoneNumber } = user;
                 dispatch(actionLoginSync({ email, password, displayName, accessToken, photoURL, phoneNumber, error: false }));
-                console.log(`Bienvenido usuario encontrado ${user.displayName}`);
+                // console.log(`Bienvenido usuario encontrado ${user.displayName}`);
             })
             .catch(error => {
                 console.log(error);

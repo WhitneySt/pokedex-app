@@ -4,42 +4,42 @@ import { useDispatch, useSelector } from "react-redux";
 import { actionLogoutAsyn } from "../redux/actions/actionLogin";
 import {
   UserOutlined,
-  StarOutlined,
   EyeOutlined,
   LogoutOutlined,
   AliwangwangOutlined,
   HomeOutlined,
+  DeleteOutlined,
 } from "@ant-design/icons";
 import { actionClearSync } from "../redux/actions/actionRegister";
 import {
   addPokemonAsync,
+  deletePokemonAsync,
   errorSync,
-  fillAsync,
+  fillFavoritesAsync,
 } from "../redux/actions/actionPokemon";
 import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
+// import Swal from "sweetalert2";
 
 const { Meta } = Card;
 
-const Home = () => {
+const Pokeball = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const {
-    pokemons,
-    error: favoritesError,
-    favorites,
-  } = useSelector((store) => store.pokemonStore);
+  const { error: favoritesError, favorites } = useSelector(
+    (store) => store.pokemonStore
+  );
   const { displayName } = useSelector((store) => store.loginStore);
   const [drawerVisible, setDrawerVisible] = useState(false);
 
   useEffect(() => {
-    if (!pokemons || pokemons.length === 0) {
-      loadPokemons();
+    if (!favorites || favorites.length === 0) {
+      loadPokeball();
     }
-  }, [pokemons]);
+  }, [favorites]);
 
-  const loadPokemons = async () => {
-    dispatch(fillAsync());
+  const loadPokeball = async () => {
+    dispatch(fillFavoritesAsync());
   };
 
   const onClick = () => {
@@ -66,36 +66,36 @@ const Home = () => {
     };
   }
 
-  const handleFavorites = (pokemonId) => {
-    const pokemon = pokemons.find((p) => p.id === pokemonId);
-    dispatch(addPokemonAsync(pokemon));
-  };
+  // const handleFavorites = (pokemonId) => {
+  //   const pokemon = pokemons.find((p) => p.id === pokemonId);
+  //   dispatch(addPokemonAsync(pokemon));
+  // };
 
-  if (favoritesError) {
-    Swal.fire({
-      icon: "error",
-      title: "Oops...",
-      text: "Datos de login incorrectos",
-    }).then(() => {
-      dispatch(errorSync({ error: undefined }));
-    });
-  } else {
-    if (favoritesError === false) {
-      Swal.fire({
-        icon: "success",
-        title: "Congratulations.",
-        text: "Pokemon has been added in the pokeball!",
-      }).then(() => {
-        dispatch(errorSync({ error: undefined }));
-      });
-    }
-  }
+  // if (favoritesError) {
+  //   Swal.fire({
+  //     icon: "error",
+  //     title: "Oops...",
+  //     text: "Datos de login incorrectos",
+  //   }).then(() => {
+  //     dispatch(errorSync({ error: undefined }));
+  //   });
+  // } else {
+  //   if (favoritesError === false) {
+  //     Swal.fire({
+  //       icon: "success",
+  //       title: "Congratulations.",
+  //       text: "Pokemon has been added in the pokeball!",
+  //     }).then(() => {
+  //       dispatch(errorSync({ error: undefined }));
+  //     });
+  //   }
+  // }
 
-  const isFavorite = (pokemonId) => {
-    return favorites.find((favorite) => favorite.id === pokemonId)
-      ? true
-      : false;
-  };
+  // const isFavorite = (pokemonId) => {
+  //   return favorites.find((favorite) => favorite.id === pokemonId)
+  //     ? true
+  //     : false;
+  // };
 
   const items = [
     getItem("Home", "1", <HomeOutlined />),
@@ -163,8 +163,8 @@ const Home = () => {
           margin: 10,
         }}
       >
-        {pokemons && pokemons.length ? (
-          pokemons.map((item, index) => (
+        {favorites && favorites.length ? (
+          favorites.map((item, index) => (
             <Card
               key={index}
               hoverable
@@ -179,10 +179,21 @@ const Home = () => {
                   onClick={() => navigate(`/pokemon/${item.name}`)}
                   key="details"
                 />,
-                <StarOutlined
-                  style={{ color: isFavorite(item.id) ? "red" : "" }}
-                  onClick={() => handleFavorites(item.id)}
-                  key="favorites"
+                <DeleteOutlined
+                  onClick={() => {
+                    Swal.fire({
+                      title: "Do you want to leave free this pokemon?",
+                      showCancelButton: true,
+                      confirmButtonText: "Yes",
+                      cancelButtonText: "No",
+                    }).then((result) => {
+                      if (result.isConfirmed) {
+                        dispatch(deletePokemonAsync({ id: item.firestoreId }));
+                        Swal.fire("Pokemon released!", "", "success");
+                      }
+                    });
+                  }}
+                  key="remove"
                 />,
               ]}
             >
@@ -208,4 +219,4 @@ const Home = () => {
   );
 };
 
-export default Home;
+export default Pokeball;
