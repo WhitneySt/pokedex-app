@@ -8,7 +8,6 @@ const Register = () => {
     const dispatch = useDispatch()
     const navigate = useNavigate();
     const { error: registerError } = useSelector(store => store.registerStore);
-    const { authenticated } = useSelector(store => store.loginStore);
 
     const validatePhoneNumber = (str, validStringLength) => {
         if (!str) return false;

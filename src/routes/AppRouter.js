@@ -5,10 +5,10 @@ import { onAuthStateChanged } from "firebase/auth";
 import Login from "../containers/Login";
 import Register from "../containers/Register";
 import DashboardRouters from "./DashboardRouters";
-import '../styles/styles.css'
 import PublicRouters from "./PublicRouters";
 import PrivateRouters from "./PrivateRouters";
 import { useSelector } from "react-redux";
+import '../styles/styles.css'
 
 const AppRouter = () => {
     const [cheking, setCheking] = useState(true);
@@ -23,7 +23,6 @@ const AppRouter = () => {
 
                 user.getIdToken()
                     .then((token) => {
-                        // console.log('el token es: ', token) 
                     })
             } else {
                 setIsLoggedIn(false);

@@ -1,6 +1,5 @@
 export const typesLogin = {
     login: '[Login] login',
-    // loginError: '[Login] loginError',
     loginGoogleAndFacebook: '[Login] loginGoogleAndFacebook',
     logout: '[Login] logout',
     authenticated: '[login] authenticated',

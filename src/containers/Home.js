@@ -1,16 +1,10 @@
-import React, { useEffect, useState } from "react";
-import { Button, Avatar, Tooltip, Card, Empty, Drawer, Menu, Tag, AutoComplete } from "antd";
+import React, { useEffect } from "react";
+import { Card, Empty, Tag, AutoComplete } from "antd";
 import { useDispatch, useSelector } from "react-redux";
-import { actionLogoutAsyn } from "../redux/actions/actionLogin";
 import {
-  UserOutlined,
   StarOutlined,
-  EyeOutlined,
-  LogoutOutlined,
-  AliwangwangOutlined,
-  HomeOutlined,
+  EyeOutlined
 } from "@ant-design/icons";
-import { actionClearSync } from "../redux/actions/actionRegister";
 import {
   addPokemonAsync,
   clearSearch,
@@ -20,6 +14,7 @@ import {
 } from "../redux/actions/actionPokemon";
 import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
+import CustomMenu from "../components/CustomMenu";
 
 const { Meta } = Card;
 
@@ -33,24 +28,12 @@ const Home = () => {
     selected: selectedItem
   } = useSelector((store) => store.pokemonStore);
 
-  const { displayName } = useSelector((store) => store.loginStore);
-  const [drawerVisible, setDrawerVisible] = useState(false);
-  const [options, setOptions] = useState([]);
-
   useEffect(() => {
     if (!pokemons || pokemons.length === 0) {
-      loadPokemons()
+      dispatch(fillAsync());
     }
-  }, [pokemons]);
+  }, [pokemons, dispatch]);
 
-  const loadPokemons = async () => {
-    dispatch(fillAsync());
-  };
-
-  const onClick = () => {
-    dispatch(actionLogoutAsyn());
-    dispatch(actionClearSync());
-  };
 
   const identifyEvolution = (evolutions = [], pokemonName) => {
     const index = evolutions.findIndex(
@@ -60,16 +43,6 @@ const Home = () => {
       ? "isn't an evolution"
       : `${evolutions[index - 1].species_name} evolution`;
   };
-
-  function getItem(label, key, icon, children, type) {
-    return {
-      key,
-      icon,
-      children,
-      label,
-      type,
-    };
-  }
 
   const handleFavorites = (pokemonId) => {
     const pokemon = pokemons.find((p) => p.id === pokemonId);
@@ -102,25 +75,12 @@ const Home = () => {
       : false;
   };
 
-  const items = [
-    getItem("Home", "1", <HomeOutlined />),
-    getItem("Profile", "2", <UserOutlined />),
-    getItem("Poke ball", "3", <AliwangwangOutlined />),
-    getItem("Logout", "4", <LogoutOutlined />),
-  ];
-
   const onSelect = (name) => {
     dispatch(selectPokemon({ name }));
   }
 
   const onClear = async () => {
     dispatch(clearSearch());
-  }
-
-  const onChange = (value) => {
-    // if (!value || value === '' || value.trim() === '') {
-    //   loadPokemons();
-    // }
   }
 
   const renderCards = (selected, list) => {
@@ -182,54 +142,8 @@ const Home = () => {
 
 
   return (
-    <div style={{ display: "flex", flexDirection: "column", gap: "1em" }}>
-      <Drawer
-        title={`Hi, ${displayName}!`}
-        placement={"left"}
-        closable={true}
-        onClose={() => setDrawerVisible(false)}
-        visible={drawerVisible}
-        key={"left"}
-      >
-        <Menu
-          onClick={(e) => {
-            const key = parseInt(e.key);
-            if (key === 1) {
-              navigate("/home");
-            }
-
-            if (key === 3) {
-              navigate("/pokeball");
-            }
-
-            if (key === 4) {
-              dispatch(actionLogoutAsyn());
-              dispatch(actionClearSync());
-            }
-          }}
-          style={{ width: "100%" }}
-          defaultSelectedKeys={["1"]}
-          defaultOpenKeys={["sub1"]}
-          mode="inline"
-          items={items}
-        />
-      </Drawer>
-      <div style={{ display: "flex", justifyContent: "space-between", margin: '1em' }}>
-        <div style={{ display: "flex", justifyContent: "space-between" }}>
-          <Tooltip title="user" color="#2BE7E8">
-            <Button
-              style={{ backgroundColor: "transparent", border: "none" }}
-              onClick={() => setDrawerVisible(true)}
-            >
-              <Avatar icon={<UserOutlined />} />
-            </Button>
-          </Tooltip>
-          <div style={{ display: "flex", flexDirection: "column" }}>
-            <span>Hi!</span>
-            <span>{displayName}</span>
-          </div>
-        </div>
-      </div>
+    <div style={{ display: "flex", flexDirection: "column", gap: "1em", margin: '1em' }}>
+      <CustomMenu selectedItem={"1"} />
       <div style={{ margin: '1em' }}>
         <AutoComplete
           onClear={onClear}
@@ -242,7 +156,6 @@ const Home = () => {
           style={{
             width: 400,
           }}
-          onChange={onChange}
           onSelect={onSelect}
           placeholder="Search"
         />

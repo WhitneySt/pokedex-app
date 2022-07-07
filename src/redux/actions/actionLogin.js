@@ -1,7 +1,5 @@
 import { signInWithEmailAndPassword, signInWithPopup, signOut } from "firebase/auth";
-import { authentication, google, facebook, dataBase } from "../../Firebase/firebaseConfig";
-import { doc, updateDoc } from "firebase/firestore";
-// import { getUserFromDatabase } from "../../modules/helpers";
+import { authentication, google, facebook } from "../../Firebase/firebaseConfig";
 import { typesLogin } from "../types/types"
 
 //--------------Login---------------------------//
@@ -12,7 +10,6 @@ export const actionLoginAsync = (email, password) => {
             .then(({ user }) => {
                 const { displayName, accessToken, photoURL, phoneNumber } = user;
                 dispatch(actionLoginSync({ email, password, displayName, accessToken, photoURL, phoneNumber, error: false }));
-                // console.log(`Bienvenido usuario encontrado ${user.displayName}`);
             })
             .catch(error => {
                 console.log(error);
@@ -21,45 +18,12 @@ export const actionLoginAsync = (email, password) => {
     }
 }
 
-
-// export const actionVerifyCodeAsync = (item) => {
-//     return (dispatch) => {
-//         const confirmationResult = window.confirmationResult;
-//         confirmationResult.confirm(item.code).then(async (result) => {
-//             // User signed in successfully.
-//             // const user = result.user;
-//             const userData = await getUserFromDatabase(item.email);
-//             dispatch(actionUpdateUserInfoSync(userData));
-//             dispatch(actionAuthenticatedSync());
-//         });
-//     }
-// }
-
 export const actionAuthenticatedSync = (item) => {
     return {
         type: typesLogin.authenticated
     }
 }
 
-// export const actionUpdateUserInfoSync = (item) => {
-//     return {
-//         type: typesLogin.updateUserInfo,
-//         payload: {
-//             ...item
-//         }
-//     }
-// }
-
-// export const actionCompleteUserInfoAsync = (item) => {
-//     return (dispatch) => {
-//         const docRef = doc(dataBase, "users", item.id);
-//         updateDoc(docRef, item)
-//             .then(resp => {
-//                 dispatch(actionUpdateUserInfoSync({ ...item, updateUserError: false }));
-//             })
-//             .catch(error => dispatch(actionUpdateUserInfoSync({ ...item, updateUserError: true })))
-//     }
-// }
 
 export const actionLoginSync = ({ email, password, displayName, accessToken, photoURL, phoneNumber, error }) => {
     return {
@@ -117,30 +81,12 @@ export const loginFacebook = () => {
         console.log("dentro de facebook");
         signInWithPopup(authentication, facebook)
             .then((result) => {
-                // The signed-in user info.
                 const user = result.user;
                 dispatch(actionLoginGoogleAndFacebookSync(user.email, user.displayName, user.accessToken, user.photoURL, user.phoneNumber));
                 dispatch(actionAuthenticatedSync());
-                console.log(user, 'Usuario Autorizado, Bienvenido desde Facebook')
-
-                // This gives you a Facebook Access Token. You can use it to access the Facebook API.
-                // const credential = FacebookAuthProvider.credentialFromResult(result);
-                // const accessToken = credential.accessToken;
-
-                // ...
             })
             .catch((error) => {
-                // Handle Errors here.
-                // const errorCode = error.code;
-                // const errorMessage = error.message;
-                // The email of the user's account used.
-                // const email = error.customData.email;
-                // The AuthCredential type that was used.
-                // const credential = FacebookAuthProvider.credentialFromError(error);
-
                 console.log(error);
-
-                // ...
             });
     }
 }

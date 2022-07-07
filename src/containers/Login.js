@@ -55,11 +55,6 @@ const Login = () => {
                 wrapperCol={{
                     span: 16,
                 }}
-                initialValues={{
-                    email: "whitneystena418@gmail.com",
-                    password: "Welcome1",
-                    remember: true,
-                }}
                 onFinish={onFinish}
                 onFinishFailed={onFinishFailed}
                 autoComplete="off"

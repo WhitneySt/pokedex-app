@@ -46,17 +46,10 @@ const Details = () => {
 
   useEffect(() => {
     if (abilities.length === 0) {
-      getAbilities();
-    }
-  }, [abilities]);
-
-  const getAbilities = async () => {
-    try {
       dispatch(fillAbilitiesAsync());
-    } catch (error) {
-      console.log(error);
     }
-  }
+  }, [abilities, dispatch]);
+
 
   const getEvolutionImages = (currentPokemon, allPokemons) => {
     if (!currentPokemon || !currentPokemon.evolutions) return null;

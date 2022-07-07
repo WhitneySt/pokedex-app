@@ -1,49 +1,33 @@
-import React, { useEffect, useState } from "react";
-import { Button, Avatar, Tooltip, Card, Empty, Drawer, Menu } from "antd";
+import React, { useEffect } from "react";
+import { Card, Empty } from "antd";
 import { useDispatch, useSelector } from "react-redux";
-import { actionLogoutAsyn } from "../redux/actions/actionLogin";
 import {
-  UserOutlined,
   EyeOutlined,
-  LogoutOutlined,
-  AliwangwangOutlined,
-  HomeOutlined,
   DeleteOutlined,
   EditOutlined,
 } from "@ant-design/icons";
-import { actionClearSync } from "../redux/actions/actionRegister";
 import {
   deletePokemonAsync,
   fillFavoritesAsync,
 } from "../redux/actions/actionPokemon";
 import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
+import CustomMenu from "../components/CustomMenu";
 
 const { Meta } = Card;
 
 const Pokeball = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { error: favoritesError, favorites } = useSelector(
+  const { favorites } = useSelector(
     (store) => store.pokemonStore
   );
-  const { displayName } = useSelector((store) => store.loginStore);
-  const [drawerVisible, setDrawerVisible] = useState(false);
 
   useEffect(() => {
     if (!favorites || favorites.length === 0) {
-      loadPokeball();
+      dispatch(fillFavoritesAsync());
     }
-  }, [favorites]);
-
-  const loadPokeball = async () => {
-    dispatch(fillFavoritesAsync());
-  };
-
-  const onClick = () => {
-    dispatch(actionLogoutAsyn());
-    dispatch(actionClearSync());
-  };
+  }, [favorites, dispatch]);
 
   const identifyEvolution = (evolutions = [], pokemonName) => {
     const index = evolutions.findIndex(
@@ -54,73 +38,11 @@ const Pokeball = () => {
       : `${evolutions[index - 1].species_name} evolution`;
   };
 
-  function getItem(label, key, icon, children, type) {
-    return {
-      key,
-      icon,
-      children,
-      label,
-      type,
-    };
-  }
 
-  const items = [
-    getItem("Home", "1", <HomeOutlined />),
-    getItem("Profile", "2", <UserOutlined />),
-    getItem("Poke ball", "3", <AliwangwangOutlined />),
-    getItem("Logout", "4", <LogoutOutlined />),
-  ];
 
   return (
-    <div style={{ display: "flex", flexDirection: "column", gap: "1em" }}>
-      <Drawer
-        title={`Hi, ${displayName}!`}
-        placement={"left"}
-        closable={true}
-        onClose={() => setDrawerVisible(false)}
-        visible={drawerVisible}
-        key={"left"}
-      >
-        <Menu
-          onClick={(e) => {
-            const key = parseInt(e.key);
-            if (key === 1) {
-              navigate("/home");
-            }
-
-            if (key === 3) {
-              navigate("/pokeball");
-            }
-
-            if (key === 4) {
-              dispatch(actionLogoutAsyn());
-              dispatch(actionClearSync());
-            }
-          }}
-          style={{ width: "100%" }}
-          defaultSelectedKeys={["1"]}
-          defaultOpenKeys={["sub1"]}
-          mode="inline"
-          items={items}
-        />
-      </Drawer>
-      <div style={{ display: "flex", justifyContent: "space-between" }}>
-        <div style={{ display: "flex", justifyContent: "space-between" }}>
-          <Tooltip title="user" color="#2BE7E8">
-            <Button
-              style={{ backgroundColor: "transparent", border: "none" }}
-              onClick={() => setDrawerVisible(true)}
-            >
-              <Avatar icon={<UserOutlined />} />
-            </Button>
-          </Tooltip>
-          <div style={{ display: "flex", flexDirection: "column" }}>
-            <span>Hi!</span>
-            <span>{displayName}</span>
-          </div>
-        </div>
-      </div>
-
+    <div style={{ display: "flex", flexDirection: "column", gap: "1em", margin: "1em" }}>
+      <CustomMenu selectedItem={"2"} />
       <div
         style={{
           display: "flex",

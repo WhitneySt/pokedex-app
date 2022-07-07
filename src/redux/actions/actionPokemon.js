@@ -15,19 +15,6 @@ import config from "../../config";
 export const fillAsync = () => {
   return async (dispatch) => {
     try {
-      //   const collectionUsers = collection(dataBase, "pokemons");
-      //   const querySnapshot = query(collectionUsers);
-
-      //   const documents = await getDocs(querySnapshot);
-      //   let details = [];
-      //   documents.forEach((document) => {
-      //     details.push({
-      //       firestoreId: document.id,
-      //       ...document.data(),
-      //     });
-      //   });
-
-      //   if (details.length === 0) {
       const response = await HttpGet(config.apiUrl.pokemons);
       const detailsPromises = [];
       for (const item of response.results) {
@@ -41,10 +28,6 @@ export const fillAsync = () => {
       }
 
       const details = await Promise.all(detailsPromises);
-      // for (const detail of details) {
-      //   await addDoc(collection(dataBase, "pokemons"), detail);
-      // }
-      //   }
 
       dispatch(
         fillSync({
