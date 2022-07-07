@@ -2,15 +2,15 @@ import { collection, query, where, getDocs } from "firebase/firestore";
 import { dataBase } from "../Firebase/firebaseConfig";
 import axios from "axios";
 
-export const getUserFromDatabase = (email) => {
+export const getPokemonByNameFromDatabase = (name) => {
     return new Promise((resolve, reject) => {
         try {
-            const collectionUsers = collection(dataBase, "users");
-            const querySnapshot = query(collectionUsers, where("email", "==", email));
+            const collectionUsers = collection(dataBase, "pokemons");
+            const querySnapshot = query(collectionUsers, where("name", "==", name));
             getDocs(querySnapshot).then(documents => {
                 documents.forEach((document) => {
                     return resolve({
-                        id: document.id,
+                        firestoreId: document.id,
                         ...document.data()
                     });
                 });

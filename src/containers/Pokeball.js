@@ -9,17 +9,15 @@ import {
   AliwangwangOutlined,
   HomeOutlined,
   DeleteOutlined,
+  EditOutlined,
 } from "@ant-design/icons";
 import { actionClearSync } from "../redux/actions/actionRegister";
 import {
-  addPokemonAsync,
   deletePokemonAsync,
-  errorSync,
   fillFavoritesAsync,
 } from "../redux/actions/actionPokemon";
 import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
-// import Swal from "sweetalert2";
 
 const { Meta } = Card;
 
@@ -65,37 +63,6 @@ const Pokeball = () => {
       type,
     };
   }
-
-  // const handleFavorites = (pokemonId) => {
-  //   const pokemon = pokemons.find((p) => p.id === pokemonId);
-  //   dispatch(addPokemonAsync(pokemon));
-  // };
-
-  // if (favoritesError) {
-  //   Swal.fire({
-  //     icon: "error",
-  //     title: "Oops...",
-  //     text: "Datos de login incorrectos",
-  //   }).then(() => {
-  //     dispatch(errorSync({ error: undefined }));
-  //   });
-  // } else {
-  //   if (favoritesError === false) {
-  //     Swal.fire({
-  //       icon: "success",
-  //       title: "Congratulations.",
-  //       text: "Pokemon has been added in the pokeball!",
-  //     }).then(() => {
-  //       dispatch(errorSync({ error: undefined }));
-  //     });
-  //   }
-  // }
-
-  // const isFavorite = (pokemonId) => {
-  //   return favorites.find((favorite) => favorite.id === pokemonId)
-  //     ? true
-  //     : false;
-  // };
 
   const items = [
     getItem("Home", "1", <HomeOutlined />),
@@ -176,9 +143,10 @@ const Pokeball = () => {
               }
               actions={[
                 <EyeOutlined
-                  onClick={() => navigate(`/pokemon/${item.name}`)}
+                  onClick={() => navigate(`/pokemon/${item.name}/view`)}
                   key="details"
                 />,
+                <EditOutlined key={'edit'} onClick={() => navigate(`/pokemon/${item.name}/edit`)} />,
                 <DeleteOutlined
                   onClick={() => {
                     Swal.fire({

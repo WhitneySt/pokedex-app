@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Button, Avatar, Tooltip, Card, Empty, Drawer, Menu } from "antd";
+import { Button, Avatar, Tooltip, Card, Empty, Drawer, Menu, Tag, AutoComplete } from "antd";
 import { useDispatch, useSelector } from "react-redux";
 import { actionLogoutAsyn } from "../redux/actions/actionLogin";
 import {
@@ -13,8 +13,10 @@ import {
 import { actionClearSync } from "../redux/actions/actionRegister";
 import {
   addPokemonAsync,
+  clearSearch,
   errorSync,
   fillAsync,
+  selectPokemon,
 } from "../redux/actions/actionPokemon";
 import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
@@ -28,13 +30,16 @@ const Home = () => {
     pokemons,
     error: favoritesError,
     favorites,
+    selected: selectedItem
   } = useSelector((store) => store.pokemonStore);
+
   const { displayName } = useSelector((store) => store.loginStore);
   const [drawerVisible, setDrawerVisible] = useState(false);
+  const [options, setOptions] = useState([]);
 
   useEffect(() => {
     if (!pokemons || pokemons.length === 0) {
-      loadPokemons();
+      loadPokemons()
     }
   }, [pokemons]);
 
@@ -91,8 +96,8 @@ const Home = () => {
     }
   }
 
-  const isFavorite = (pokemonId) => {
-    return favorites.find((favorite) => favorite.id === pokemonId)
+  const isFavorite = (list, pokemonId) => {
+    return list && list.find((favorite) => favorite.id === pokemonId)
       ? true
       : false;
   };
@@ -103,6 +108,78 @@ const Home = () => {
     getItem("Poke ball", "3", <AliwangwangOutlined />),
     getItem("Logout", "4", <LogoutOutlined />),
   ];
+
+  const onSelect = (name) => {
+    dispatch(selectPokemon({ name }));
+  }
+
+  const onClear = async () => {
+    dispatch(clearSearch());
+  }
+
+  const onChange = (value) => {
+    // if (!value || value === '' || value.trim() === '') {
+    //   loadPokemons();
+    // }
+  }
+
+  const renderCards = (selected, list) => {
+    let items = list;
+    if (selected && selected.length) {
+      items = selected;
+    }
+
+    return items && items.length ? (
+      items.map((item, index) => (
+        <Card
+          key={index}
+          hoverable
+          style={{
+            width: 240,
+          }}
+          cover={
+            <img alt="pokemon" src={item.sprites.front_default || ""} />
+          }
+          actions={[
+            <EyeOutlined
+              onClick={() => navigate(`/pokemon/${item.name}`)}
+              key="details"
+            />,
+            <StarOutlined
+              style={{ color: isFavorite(favorites, item.id) ? "red" : "" }}
+              onClick={() => handleFavorites(item.id)}
+              key="favorites"
+            />,
+          ]}
+        >
+          <Meta
+            title={
+              <span style={{ textTransform: "capitalize" }}>
+                {`${item.name} #${item.id}`}
+              </span>
+            }
+            description={
+              <>
+                <p>
+                  {item.evolutions && item.evolutions.length
+                    ? identifyEvolution(item.evolutions, item.name)
+                    : ""}
+                </p>
+                <p>
+                  Types: {item.types.map((item, index) => (
+                    <Tag key={index}>{item.type.name}</Tag>
+                  ))}
+                </p>
+              </>
+            }
+          />
+        </Card>
+      ))
+    ) : (
+      <Empty />
+    )
+  }
+
 
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: "1em" }}>
@@ -137,7 +214,7 @@ const Home = () => {
           items={items}
         />
       </Drawer>
-      <div style={{ display: "flex", justifyContent: "space-between" }}>
+      <div style={{ display: "flex", justifyContent: "space-between", margin: '1em' }}>
         <div style={{ display: "flex", justifyContent: "space-between" }}>
           <Tooltip title="user" color="#2BE7E8">
             <Button
@@ -153,7 +230,23 @@ const Home = () => {
           </div>
         </div>
       </div>
-
+      <div style={{ margin: '1em' }}>
+        <AutoComplete
+          onClear={onClear}
+          allowClear
+          filterOption
+          options={pokemons && pokemons.length ? pokemons.map(p => ({
+            label: p.name,
+            value: p.name
+          })) : []}
+          style={{
+            width: 400,
+          }}
+          onChange={onChange}
+          onSelect={onSelect}
+          placeholder="Search"
+        />
+      </div>
       <div
         style={{
           display: "flex",
@@ -163,46 +256,7 @@ const Home = () => {
           margin: 10,
         }}
       >
-        {pokemons && pokemons.length ? (
-          pokemons.map((item, index) => (
-            <Card
-              key={index}
-              hoverable
-              style={{
-                width: 240,
-              }}
-              cover={
-                <img alt="pokemon" src={item.sprites.front_default || ""} />
-              }
-              actions={[
-                <EyeOutlined
-                  onClick={() => navigate(`/pokemon/${item.name}`)}
-                  key="details"
-                />,
-                <StarOutlined
-                  style={{ color: isFavorite(item.id) ? "red" : "" }}
-                  onClick={() => handleFavorites(item.id)}
-                  key="favorites"
-                />,
-              ]}
-            >
-              <Meta
-                title={
-                  <span style={{ textTransform: "capitalize" }}>
-                    {item.name}
-                  </span>
-                }
-                description={
-                  item.evolutions && item.evolutions.length
-                    ? identifyEvolution(item.evolutions, item.name)
-                    : ""
-                }
-              />
-            </Card>
-          ))
-        ) : (
-          <Empty />
-        )}
+        {renderCards(selectedItem, pokemons)}
       </div>
     </div>
   );

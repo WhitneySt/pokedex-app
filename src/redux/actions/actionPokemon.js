@@ -7,6 +7,7 @@ import {
   query,
   doc,
   deleteDoc,
+  updateDoc,
 } from "firebase/firestore";
 import { HttpGet, MapEvolutions } from "../../modules/helpers";
 import config from "../../config";
@@ -27,7 +28,7 @@ export const fillAsync = () => {
       //   });
 
       //   if (details.length === 0) {
-      const response = await HttpGet(config.apiUrl);
+      const response = await HttpGet(config.apiUrl.pokemons);
       const detailsPromises = [];
       for (const item of response.results) {
         const pokemon = await HttpGet(config.detail(item.name));
@@ -172,3 +173,66 @@ export const deletePokemonSync = (params) => {
     },
   };
 };
+
+export const updatePokemonAsync = (item) => {
+  return (dispatch) => {
+    const docRef = doc(dataBase, "pokemons", item.firestoreId);
+    updateDoc(docRef, item)
+      .then(resp => {
+        dispatch(updatePokemonSync({ ...item, editPokemonError: false }));
+      })
+      .catch(error => {
+        console.log(error);
+        dispatch(updatePokemonSync({ ...item, editPokemonError: true }));
+      });
+  }
+}
+
+export const updatePokemonSync = (params) => {
+  return {
+    type: typesPokemon.updatePokemon,
+    payload: {
+      firestoreId: params.firestoreId,
+      height: params.height,
+      weight: params.weight,
+      abilities: params.abilities,
+      editPokemonError: params.editPokemonError
+    }
+  }
+}
+
+export const fillAbilitiesAsync = () => {
+  return (dispatch) => {
+    HttpGet(config.apiUrl.abilities)
+      .then(response => {
+        const abilities = response.results.map(item => ({ ability: item }))
+        dispatch(fillAbilitiesSync({ abilities }));
+      }).catch(error => {
+        console.log(error);
+      });
+  }
+}
+
+export const fillAbilitiesSync = (params) => {
+  return {
+    type: typesPokemon.fillAbilities,
+    payload: {
+      abilities: params.abilities
+    }
+  }
+}
+
+export const clearSearch = () => {
+  return {
+    type: typesPokemon.clearSearch
+  }
+}
+
+export const selectPokemon = (params) => {
+  return {
+    type: typesPokemon.selectPokemon,
+    payload: {
+      name: params.name
+    }
+  }
+}

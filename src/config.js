@@ -1,8 +1,8 @@
 const config = {
-    // apiUrl: 'https://workshop-2-ag.herokuapp.com/pokemons',
-    // detail: (pokemonName) => `https://workshop-2-ag.herokuapp.com/pokemon`,
-    // evolutions: (pokemonId) => `https://workshop-2-ag.herokuapp.com/evolutions`,
-    apiUrl: 'https://pokeapi.co/api/v2/pokemon',
+    apiUrl: {
+        pokemons: 'https://pokeapi.co/api/v2/pokemon?offset=0&limit=30',
+        abilities: 'https://pokeapi.co/api/v2/ability?offset=0&limit=400'
+    },
     evolutions: (pokemonId) => `https://pokeapi.co/api/v2/evolution-chain/${pokemonId}`,
     detail: (pokemonName) => `https://pokeapi.co/api/v2/pokemon/${pokemonName}`
 }

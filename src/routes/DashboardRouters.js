@@ -11,6 +11,7 @@ const DashboardRouters = () => {
             <Routes>
                 <Route path="/home" element={<Home />} />
                 <Route path="/pokemon/:name" element={<Details />} />
+                <Route path="/pokemon/:name/:action" element={<Details />} />
                 <Route path="/pokeball" element={<Pokeball />} />
             </Routes>
         </>
