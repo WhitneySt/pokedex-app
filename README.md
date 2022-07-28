@@ -39,7 +39,8 @@ Note: The project is already configured to run with the firebase configuration o
 5. Select the project you have configured in firebase and that refer to this project and press space bar and enter
 6. Write dist so the process create and configure that folder (this will be removed later)
 7. Once generated the firebase configuration files, Remove the dist folder and execute the command `npm run build`
-8. Execute the command `firebase deploy` and wait until the process return the deployed url
+8. Remove the dist folder using the comment `rm -rf dist` and go to the firebase.json file and change the value for the public property from **dist** to **build**
+9. Execute the command `firebase deploy` and wait until the process return the deployed url
 
 ## Deployment Url
 * https://pokedex-prueba-tecnica.web.app/login
